@@ -39,6 +39,7 @@ mnist_dataloader = MnistDataloader(training_images_filepath, training_labels_fil
 long_xtrain = [np.asarray(x).flatten() for x in x_train]
 datapoints = np.array([DataPoint(x,y) for x,y in zip(long_xtrain,y_train)])
 
-main_network = Network([784, 100, 100, 10])
-print(main_network.calculate_output(datapoints[0]))
+nn = Network([784, 100, 100, 10])
+
+nn.train(datapoints[1:100], 1000, 1)
 
