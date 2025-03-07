@@ -1,14 +1,30 @@
 import numpy as np
 from layer import Layer
+from activation_function import *
 
 class Network:
-    def __init__(self, layer_sizes):
+    def __init__(self, layer_sizes, activation_func, weight_file = None, bias_file = None):
         self.layers = []
 
-        for i in range(len(layer_sizes)-1):
-            self.layers.append(Layer(layer_sizes[i], layer_sizes[i+1]))
+        if layer_sizes is not None:
+            for i in range(len(layer_sizes)-1):
+                self.layers.append(Layer(layer_sizes[i], layer_sizes[i+1], activation_func))
 
-        self.layers[-1].is_output_layer = True
+            self.layers[-1].is_output_layer = True
+        else:
+            loaded_weights = np.load(weight_file)
+            loaded_biases = np.load(bias_file)
+
+            for layer_index, key in enumerate(loaded_weights.files):
+                current_layer_weights = loaded_weights[key]
+                current_layer_biases = loaded_biases[key]
+                self.layers.append(Layer(input_length= current_layer_weights.shape[0],
+                                         output_length=current_layer_weights[1],
+                                         activation_func= activation_func,
+                                         weights= current_layer_weights,
+                                         biases= current_layer_biases)
+                )
+
 
     def softmax(self, logits):
         """
@@ -50,24 +66,23 @@ class Network:
         # Propagate gradients backward through hidden layers
         for i in range(len(self.layers) - 2, 0, -1):  # Iterate backward
             dL_dX = self.layers[i+1].input_weight_gradients  # Get the propagated gradient from the next layer
-            self.layers[i].calculate_gradients(self.layers[i].output, self.layers[i-1].preactivation_values, self.layers[i+1].weights, dL_dZ_next= dL_dX)
+            self.layers[i].calculate_gradients(self.layers[i].output,
+                                               self.layers[i-1].output,
+                                               self.layers[i+1].weights,
+                                               dL_dZ_next= dL_dX
+            )
 
             # Handle the first layer separately
         if len(self.layers) > 1:  # Make sure there's more than one layer
             dL_dX = self.layers[1].input_weight_gradients
             # For the first layer, use the raw input data
             input_data = np.array([x.input for x in datapoints])
-            self.layers[0].calculate_gradients(self.layers[0].preactivation_values, input_data, self.layers[1].weights,
-                                               dL_dZ_next=dL_dX)
+            self.layers[0].calculate_gradients(self.layers[0].output,
+                                               input_data,
+                                               self.layers[1].weights,
+                                               dL_dZ_next=dL_dX
+            )
 
         for layer in self.layers:
             layer.apply_gradients(learning_rate)
 
-
-    def train(self, datapoints, epochs, learning_rate):
-        for epoch in range(epochs):
-            y_hat = self.calculate_output(datapoints)
-            targets = np.array([x.expected_output for x in datapoints])
-            self.backward(datapoints, learning_rate)
-            if epoch % 100 == 0:
-                print(self.loss(datapoints))

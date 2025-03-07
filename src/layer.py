@@ -1,13 +1,26 @@
 import numpy as np
+from activation_function import *
 
 class Layer:
-    def __init__(self, input_length, output_length):
+    def __init__(self, input_length, output_length, activation_func, weights = None, biases = None):
         self.is_output_layer = False
+        self.activation_func: ActivationFunction = activation_func
 
-        #xavier initialization
-        limit = np.sqrt(6 / (input_length + output_length))
-        self.weights = np.random.uniform(-limit, limit, (input_length, output_length)) #input_length x output_length matrix
-        self.biases = np.zeros(output_length) #output_length x 1 matrix
+        if weights is None and biases is None:
+            '''
+            #xavier initialization
+            limit = np.sqrt(6 / (input_length + output_length))
+            self.weights = np.random.uniform(-limit, limit, (input_length, output_length)) #input_length x output_length matrix
+            self.biases = np.zeros(output_length) #output_length x 1 matrix
+            '''
+
+            self.weights = np.random.randn(input_length, output_length) * np.sqrt(2 / input_length)
+            self.biases = np.zeros(output_length)
+
+        else:
+            self.weights = weights
+            self.biases = biases
+
         self.preactivation_values = None #activation_function(Z = wA + b), A is activation value of previous layer
         self.output = None
 
@@ -15,7 +28,7 @@ class Layer:
         self.output_weight_gradients = None
         self.bias_gradients = None
 
-    def sigmoid(self, x):
+    def sigmoid(x):
         """
         Sigmoid activation function.
 
@@ -28,7 +41,7 @@ class Layer:
         x_clipped = np.clip(x, -500, 500)
         return 1 / (1 + np.exp(-x_clipped))
 
-    def sigmoid_derivative(self, x):
+    def sigmoid_derivative(x):
         """
         Derivative of the sigmoid function.
 
@@ -39,10 +52,18 @@ class Layer:
             numpy.ndarray: Derivative of sigmoid for the input values
         """
         # Get sigmoid of x
-        sig_x = self.sigmoid(x)
+        sig_x = Layer.sigmoid(x)
 
         # Derivative of sigmoid is sigmoid(x) * (1 - sigmoid(x))
         return sig_x * (1 - sig_x)
+
+    def relu(x):
+        """ReLU activation function: f(x) = max(0, x)"""
+        return np.where(x > 0, x, 0.01 * x)
+
+    def relu_derivative(x):
+        """Derivative of ReLU: f'(x) = 1 for x > 0, else 0"""
+        return np.where(x > 0, 1, 0.01)
 
     def calculate_outputs(self, input):
         """
@@ -52,7 +73,7 @@ class Layer:
         """
         outputs = np.matmul(input, self.weights) + self.biases
         self.preactivation_values = np.array(outputs)
-        return np.array([self.sigmoid(x) for x in outputs])
+        return self.activation_func.function(x=outputs)
 
     def calculate_gradients(self, output, previous_activation_values, weights_next = None, dL_dZ_next=None, target=None):
         """
@@ -62,11 +83,11 @@ class Layer:
 
         if self.is_output_layer:
             # Compute loss gradient w.r.t. preactivation values (Z) for output layer
-            dL_dZ = output - target  # Softmax + Cross-Entropy simplifies to this
+            dL_dZ = (output - target) * self.activation_func.derivative(self.preactivation_values) # Softmax + Cross-Entropy simplifies to this
 
         else:
             # Compute loss gradient w.r.t. preactivation values (Z) for hidden layer
-            dL_dZ = np.matmul(dL_dZ_next, weights_next.T) * self.sigmoid_derivative(self.preactivation_values) # Backpropagate error
+            dL_dZ = np.matmul(dL_dZ_next, weights_next.T) * self.activation_func.derivative(self.preactivation_values) # Backpropagate error
 
         # Compute gradients for weights, biases, and input
         self.output_weight_gradients = np.matmul(previous_activation_values.T, dL_dZ) / batch_size
