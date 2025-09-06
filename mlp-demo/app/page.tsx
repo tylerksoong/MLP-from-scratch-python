@@ -48,7 +48,7 @@ export default function Home() {
 
   async function predictArray(array2d: PixelGrid): Promise<PredictResponse> {
     try {
-      const response = await fetch('http://mlp-from-scratch-python-production.up.railway.app/api/predict', {
+      const response = await fetch('https://mlp-from-scratch-python-production.up.railway.app/api/predict', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
