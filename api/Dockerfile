@@ -1,6 +1,6 @@
 FROM continuumio/miniconda3
 WORKDIR /app
-COPY ./environment.yml .
+COPY . .
 RUN conda env create -f environment.yml -y
 
 RUN echo "source activate mlp-scratch" > ~/.bashrc \
