@@ -1,7 +1,5 @@
 FROM continuumio/miniconda3
 
-WORKDIR /app
-
 COPY environment.yml .
 
 RUN conda env creat -f environment.yml -y
