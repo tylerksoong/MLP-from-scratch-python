@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 
-from src.activation_function import LeakyReLU
+from activation_function import LeakyReLU
 
 input_path = '../data'
 training_images_filepath = input_path + '/train-images-idx3-ubyte/train-images-idx3-ubyte'

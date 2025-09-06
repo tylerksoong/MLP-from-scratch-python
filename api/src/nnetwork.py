@@ -35,15 +35,26 @@ class Network:
         return exps / np.sum(exps, axis=-1, keepdims=True)
 
     def calculate_output(self, datapoints):
+
         output = np.array([x.input for x in datapoints])
         for layer in self.layers:
             output = layer.calculate_outputs(output)
             layer.output = output
 
         return np.array([self.softmax(x) for x in output])
+    
+    def calculate_single_output(self, datapoint):
+        output = datapoint
+        for layer in self.layers:
+            output = layer.calculate_outputs(output)
+            layer.output = output
+
+        return self.softmax(output)
 
     def loss(self, datapoints):
-
+        '''
+        :param datapoints: A NumPy array of 28x28 2d arrays that represent numbers
+        '''
         # Prevent log(0) by adding a small value (epsilon)
         epsilon = 1e-15
         outputs = np.clip(self.calculate_output(datapoints), epsilon, 1 - epsilon)  # Ensure no 0s or 1s in output

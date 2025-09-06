@@ -16,8 +16,10 @@ test_labels_filepath = input_path + '/t10k-labels-idx1-ubyte/t10k-labels-idx1-ub
 mnist_dataloader = MnistDataloader(training_images_filepath, training_labels_filepath, test_images_filepath, test_labels_filepath)
 (x_train, y_train), (x_test, y_test) = mnist_dataloader.load_data()
 
-long_xtrain = [np.asarray(x).flatten() for x in x_train]
+long_xtrain = [np.asarray(x).flatten() / 255 for x in x_train]
 datapoints = np.array([DataPoint(x,y) for x,y in zip(long_xtrain,y_train)])
+
+print(np.max(long_xtrain))
 
 nn = Network([784, 100, 100, 100, 10], LeakyReLU())
 
