@@ -1,5 +1,5 @@
 import numpy as np
-from activation_function import *
+from src.activation_function import *
 
 class Layer:
     def __init__(self, input_length, output_length, activation_func, weights = None, biases = None):

@@ -3,14 +3,14 @@ import numpy as np
 from flask_cors import CORS
 
 import json
-from nnetwork import Network
-from activation_function import LeakyReLU
+from src.nnetwork import Network
+from src.activation_function import LeakyReLU
 
 app = Flask(__name__)
 
 CORS(app)
 
-nn = Network( layer_sizes=None, activation_func=LeakyReLU(), weight_file='../models/current_model/weights.npz', bias_file='../models/current_model/biases.npz')
+nn = Network( layer_sizes=None, activation_func=LeakyReLU(), weight_file='models/current_model/weights.npz', bias_file='models/current_model/biases.npz')
 
 
 @app.route('/api/predict', methods=['POST'])

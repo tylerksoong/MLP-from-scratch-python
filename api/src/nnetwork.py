@@ -1,6 +1,6 @@
 import numpy as np
-from layer import Layer
-from activation_function import *
+from src.layer import Layer
+from src.activation_function import *
 
 class Network:
     def __init__(self, layer_sizes, activation_func, weight_file = None, bias_file = None):
