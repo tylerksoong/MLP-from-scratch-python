@@ -10,6 +10,7 @@ cycler @ file:///tmp/build/80754af9/cycler_1637851556182/work
 Flask @ file:///croot/flask_1756453126864/work
 flask-cors @ file:///croot/flask-cors_1752860288387/work
 fonttools @ file:///croot/fonttools_1737039080035/work
+gunicorn @ file:///croot/gunicorn_1744295956374/work
 idna @ file:///croot/idna_1714398848350/work
 itsdangerous @ file:///croot/itsdangerous_1716533337253/work
 Jinja2 @ file:///croot/jinja2_1741710844255/work

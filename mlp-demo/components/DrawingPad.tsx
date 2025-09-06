@@ -28,7 +28,7 @@ const DrawingPad: React.FC<DrawingPadProps> = ({ pixels, onPixelUpdate, classNam
   const padRef = useRef<HTMLDivElement>(null);
 
   const drawPixel = useCallback((row: number, col: number, intensity: number = 1) => {
-    const radius = 4;
+    const radius = 3;
     const updates: PixelUpdate[] = [];
     
     for (let i = -radius; i <= radius; i++) {
