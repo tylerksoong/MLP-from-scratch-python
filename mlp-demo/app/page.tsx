@@ -33,7 +33,6 @@ export default function Home() {
 
   const [tempClass, setTempClass] = useState<number>(0);
   const [tempConfidence, setTempConfidence] = useState<number>(1);
-  const [brushSize, setBrushSize] = useState<number>(4);
   const [currentPred, setPred] = useState<PredictResponse | null>(null);
   
 
@@ -112,25 +111,22 @@ export default function Home() {
 
       <div className="rounded-md p-4 bg-stone-800  aspect-square w-96">
         <DrawingPad 
-                pixels={pixels}
-                brushSize={brushSize}
-                onPixelUpdate={handlePixelUpdate}
-              />
+          pixels={pixels}
+          onPixelUpdate={handlePixelUpdate}
+        />
       </div>
      
 
       <div className = "flex flex-row w-80 justify-between p-4">
         
-        <Button
-          color="#2563eb"
-          children="Clear"
-          onClick={clearPixels}
-        />
-        <Button
-          color="#52c465"
-          children="Predict"
-          onClick={handlePrediction}
-        />
+        <Button color="#2563eb" onClick={clearPixels}>
+          Clear
+        </Button>
+      
+        <Button color="#52c465" onClick={handlePrediction}>
+            Predict
+        </Button>
+      
       </div>
 
        {/* Animated div that fades in/out with upward movement */}

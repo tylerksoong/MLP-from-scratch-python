@@ -18,18 +18,17 @@ export type Prediction = {
 // Define props interface
 interface DrawingPadProps {
   pixels: PixelGrid;
-  brushSize: number;
   onPixelUpdate: (updates: PixelUpdate[]) => void;
   className?: string;
 }
 
-const DrawingPad: React.FC<DrawingPadProps> = ({ pixels, brushSize, onPixelUpdate, className = "" }) => {
+const DrawingPad: React.FC<DrawingPadProps> = ({ pixels, onPixelUpdate, className = "" }) => {
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
   const [blurAmount, setBlurAmount] = useState<number>(0.5);
   const padRef = useRef<HTMLDivElement>(null);
 
   const drawPixel = useCallback((row: number, col: number, intensity: number = 1) => {
-    const radius = Math.floor(brushSize / 2);
+    const radius = 4;
     const updates: PixelUpdate[] = [];
     
     for (let i = -radius; i <= radius; i++) {
@@ -41,7 +40,7 @@ const DrawingPad: React.FC<DrawingPadProps> = ({ pixels, brushSize, onPixelUpdat
           const distance = Math.sqrt(i*i + j*j);
           let value = intensity;
           
-          if (brushSize > 1 && distance > radius/1.5) {
+          if (distance > radius/1.5) {
             value = intensity * (1 - (distance - radius/1.5) / (radius - radius/1.5));
           }
           
@@ -57,7 +56,7 @@ const DrawingPad: React.FC<DrawingPadProps> = ({ pixels, brushSize, onPixelUpdat
     if (updates.length > 0) {
       onPixelUpdate(updates);
     }
-  }, [brushSize, pixels, onPixelUpdate]);
+  }, [pixels, onPixelUpdate]);
 
   const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     setIsDrawing(true);
